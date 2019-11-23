@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "concurrently \"cd client && npm start\" \"cd db && node index.js\"",
+    "build": "cd client && npm run-script build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "cd client && npm install && cd ../db && npm install"
   },
