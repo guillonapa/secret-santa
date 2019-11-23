@@ -1,35 +1,24 @@
 {
   "name": "secret-santa",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "grommet": "^2.7.11",
-    "grommet-icons": "^4.3.0",
-    "grommet-theme-aruba": "^0.1.2",
-    "react": "^16.11.0",
-    "react-dom": "^16.11.0",
-    "react-scripts": "3.2.0",
-    "styled-components": "^4.4.0"
-  },
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "concurrently \"cd client && npm start\" \"cd db && node index.js\"",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "cd client && npm install && cd ../db && npm install"
   },
-  "eslintConfig": {
-    "extends": "react-app"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guillonapa/secret-santa.git"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/guillonapa/secret-santa/issues"
+  },
+  "homepage": "https://github.com/guillonapa/secret-santa#readme",
+  "dependencies": {
+    "concurrently": "^5.0.0"
   }
 }
