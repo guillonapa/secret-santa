@@ -237,14 +237,8 @@ class App extends React.Component {
               <h1>Welcome, Santa.</h1>
               <Box alignSelf="center" align="center">
                 <Paragraph margin="none">
-                  Select your name from the dropdown and enter
-                  your unique key to reveal your secret.
-                </Paragraph>
-                <Paragraph>
-                  You will only be able to use your key once.
-                  If you need to remind yourself of your secret,
-                  you will need to contact the administrator for
-                  a new key.
+                  Enter your event and personal keys to reveal
+                  who will be on your "nice" list.
                 </Paragraph>
               </Box>
               <Box fill="horizontal">
