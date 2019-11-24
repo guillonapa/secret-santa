@@ -4,8 +4,8 @@ import { Box, Button, Collapsible, DataTable, Form, FormField, Grommet, Heading,
 import { Add, FormClose, StatusInfo, Trash, Close } from 'grommet-icons';
 import { aruba } from 'grommet-theme-aruba';
 
-// const ENV = process.env;
-const SERVER_URL = ''; //`http://localhost:${ENV.REACT_APP_API_PORT}`;
+const ENV = process.env;
+const SERVER_URL = `http://localhost:${ENV.REACT_APP_API_PORT}`;
 
 class App extends React.Component {
   constructor(props) {
@@ -48,9 +48,13 @@ class App extends React.Component {
   setShowLayer(show) {
     console.log(`GET ${SERVER_URL}/ about to take place`);
     
-    axios.get(`${SERVER_URL}/`).then(res => {
-      console.log("Get / returned: ", res);
-    });
+    axios.get(`${SERVER_URL}/`)
+      .then(res => {
+        console.log("Get / returned: ", res);
+      }).catch(function (error) {
+        // handle error
+        console.log(error);
+      });
     this.setState({
       showLayer: show
     });
