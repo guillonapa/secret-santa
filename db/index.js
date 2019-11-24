@@ -15,9 +15,9 @@ app.use(
   })
 );
 
-// app.get('/', (request, response) => {
-//   response.json({ info: 'Node.js, Express, and Postgres API' })
-// });
+app.get('/', (request, response) => {
+  response.json({ info: 'Express API is up and running!' });
+});
 
 // app.post('/event', db.createEvent);
 

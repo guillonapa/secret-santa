@@ -46,6 +46,11 @@ class App extends React.Component {
   }
 
   setShowLayer(show) {
+    console.log("GET / about to take place");
+    
+    axios.get('/').then(res => {
+      console.log("Get / returned: ", res);
+    });
     this.setState({
       showLayer: show
     });
@@ -68,6 +73,7 @@ class App extends React.Component {
     if (name.trim() && people.length > 2) {
       console.log("The data:", this.state.data);
       this.setShowLayer(false);
+      console.log("About to post to ", `${SERVER_URL}/event`);
       axios.post(`${SERVER_URL}/event`, {
         name: name.substring(0, 30),
         people
