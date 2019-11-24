@@ -32,7 +32,7 @@ app.get('/:eventKey/:personalKey', (req, res) => {
     console.log("eventKey: ", eventKey);
     console.log("personalKey: ", personalKey);
 
-    const result = await db.query(`SELECT name FROM people WHERE personal_key IN (SELECT match FROM people WHERE personal_key = '${personalKey}' AND event_key = '${eventKey}')`);
+    const result = db.query(`SELECT name FROM people WHERE personal_key IN (SELECT match FROM people WHERE personal_key = '${personalKey}' AND event_key = '${eventKey}')`);
     if (!result) {
         console.log("Error querying");
     }
@@ -49,7 +49,7 @@ app.get('/:eventKey/:personalKey', (req, res) => {
     const name = rows[0].name;
     console.log("Name: " + name);
     res.send(name ? name : "Something is not right... Check your keys and try again");
-})
+});
 
 // Anything that doesn't match the above, send back the index.html file
 app.get('*', (req, res) => {
