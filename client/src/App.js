@@ -7,6 +7,10 @@ import { aruba } from 'grommet-theme-aruba';
 const ENV = process.env;
 const SERVER_URL = `http://localhost:${ENV.REACT_APP_API_PORT}`;
 
+const axiosInstance = axios.create({
+  baseURL: `http://localhost:${ENV.REACT_APP_API_PORT}`
+});
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -29,7 +33,7 @@ class App extends React.Component {
     console.log("Personal key: ", body.value.key);
     console.log("Event key: ", eventKey);
 
-    axios.get(`${SERVER_URL}/secret`, {
+    axiosInstance.get(`/secret`, {
       params: {
         eventKey,
         personalKey: body.value.key
@@ -48,12 +52,27 @@ class App extends React.Component {
   setShowLayer(show) {
     console.log(`GET ${SERVER_URL}/ about to take place`);
     
-    axios.get(`${SERVER_URL}/`)
+    axiosInstance.get(`/`)
       .then(res => {
         console.log("Get / returned: ", res);
       }).catch(function (error) {
-        // handle error
-        console.log(error);
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log("Error Response: " + error.response);
+          console.log("Error Data: " + error.response.data);
+          console.log("Error Status: " + error.response.status);
+          console.log("Error Headers: " + error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log("Error Request: " + error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error message: ', error.message);
+        }
+        console.log("Error Config: " + error.config);
       });
     this.setState({
       showLayer: show
@@ -78,7 +97,7 @@ class App extends React.Component {
       console.log("The data:", this.state.data);
       this.setShowLayer(false);
       console.log("About to post to ", `${SERVER_URL}/event`);
-      axios.post(`${SERVER_URL}/event`, {
+      axiosInstance.post(`/event`, {
         name: name.substring(0, 30),
         people
       }).then(res => {
