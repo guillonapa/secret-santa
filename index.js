@@ -32,23 +32,26 @@ app.get('/secret/:eventKey/:personalKey', (req, res) => {
     console.log("eventKey: ", eventKey);
     console.log("personalKey: ", personalKey);
 
-    const result = db.query(`SELECT name FROM people WHERE personal_key IN (SELECT match FROM people WHERE personal_key = '${personalKey}' AND event_key = '${eventKey}')`);
-    if (!result) {
-        console.log("Error querying");
-    }
-    console.log("Ultimate result: ", result);
-    console.log("Done!!!");
+    db.query(`SELECT name FROM people WHERE personal_key IN (SELECT match FROM people WHERE personal_key = '${personalKey}' AND event_key = '${eventKey}')`)
+      .then(result => {
+        if (!result) {
+            console.log("Error querying");
+        }
+        console.log("Ultimate result: ", result);
+        console.log("Done!!!");
+    
+        const { rows } = result;
+        console.log("Rows: " + rows);
+        if (!rows || rows.length == 0) {
+            res.send("Something is not right... Check your keys and try again");
+            return;
+        }
+    
+        const name = rows[0].name;
+        console.log("Name: " + name);
+        res.send(name ? name : "Something is not right... Check your keys and try again");
 
-    const { rows } = result;
-    console.log("Rows: " + rows);
-    if (!rows || rows.length == 0) {
-        res.send("Something is not right... Check your keys and try again");
-        return;
-    }
-
-    const name = rows[0].name;
-    console.log("Name: " + name);
-    res.send(name ? name : "Something is not right... Check your keys and try again");
+      });
 });
 
 // Anything that doesn't match the above, send back the index.html file
