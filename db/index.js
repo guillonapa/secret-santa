@@ -7,6 +7,9 @@ const app = express();
 const ENV = process.env;
 const port = ENV.REACT_APP_API_PORT; //3001;
 
+console.log("First: ", ENV.REACT_APP_API_PORT);
+console.log("Second: ", ENV.MAILER_EMAIL);
+
 app.use(cors());
 app.use(
   bodyParser.urlencoded({
