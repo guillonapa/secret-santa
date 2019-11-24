@@ -46,9 +46,9 @@ class App extends React.Component {
   }
 
   setShowLayer(show) {
-    console.log("GET / about to take place");
+    console.log(`GET ${SERVER_URL}/ about to take place`);
     
-    axios.get('/').then(res => {
+    axios.get(`${SERVER_URL}/`).then(res => {
       console.log("Get / returned: ", res);
     });
     this.setState({
