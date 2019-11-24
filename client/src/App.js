@@ -7,9 +7,7 @@ import { aruba } from 'grommet-theme-aruba';
 const ENV = process.env;
 const SERVER_URL = `http://localhost:${ENV.REACT_APP_API_PORT}`;
 
-const axiosInstance = axios.create({
-  baseURL: `http://localhost:${ENV.REACT_APP_API_PORT}`
-});
+const axiosInstance = axios.create();
 
 class App extends React.Component {
   constructor(props) {
@@ -50,7 +48,7 @@ class App extends React.Component {
   }
 
   setShowLayer(show) {
-    console.log(`GET ${SERVER_URL}/ about to take place`);
+    console.log(`GET ${SERVER_URL}/ about to take place and port is ${ENV.PORT}`);
     
     axiosInstance.get(`/api`)
       .then(res => {
