@@ -31,7 +31,7 @@ class App extends React.Component {
     console.log("Personal key: ", body.value.key);
     console.log("Event key: ", eventKey);
 
-    axiosInstance.get(`/secret`, {
+    axiosInstance.get(`/secret/${eventKey}/${body.value.key}`, {
       params: {
         eventKey,
         personalKey: body.value.key

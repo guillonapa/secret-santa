@@ -6,9 +6,9 @@ const db = require('../db/index');
 // it allows you to use async functions as route handlers
 const router = new Router();
 
-router.get('/', async (req, res) => {
+router.get('/:eventKey/:personalKey', async (req, res) => {
 
-    const { eventKey, personalKey } = req.query;
+    const { eventKey, personalKey } = req.params;
 
     console.log("eventKey: ", eventKey);
     console.log("personalKey: ", personalKey);
