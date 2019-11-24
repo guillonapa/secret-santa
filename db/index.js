@@ -16,7 +16,7 @@ app.use(
 );
 
 app.get('/', (request, response) => {
-  response.json({ info: 'Express API is up and running!' });
+  response.send("Express API is up and running!");
 });
 
 // app.post('/event', db.createEvent);
