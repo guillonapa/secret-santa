@@ -28,12 +28,8 @@ class App extends React.Component {
   }
   
   showSecret(body, eventKey) {
-    console.log("Personal key: ", body.value.key);
-    console.log("Event key: ", eventKey);
-
     axiosInstance.get(`/secret/${eventKey}/${body.value.key}`)
       .then(res => {
-        console.log("The RESPONSE: ", res);
         this.setState({
           showKeyInput: false,
           showSecretPerson: true,
@@ -44,30 +40,6 @@ class App extends React.Component {
   }
 
   setShowLayer(show) {
-    console.log(`GET ${SERVER_URL}/ about to take place and port is ${ENV.PORT}`);
-    
-    axiosInstance.get(`/api`)
-      .then(res => {
-        console.log("Get / returned: ", res);
-      }).catch(function (error) {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.log("Error Response: " + error.response);
-          console.log("Error Data: " + error.response.data);
-          console.log("Error Status: " + error.response.status);
-          console.log("Error Headers: " + error.response.headers);
-        } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
-          console.log("Error Request: " + error.request);
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.log('Error message: ', error.message);
-        }
-        console.log("Error Config: " + error.config);
-      });
     this.setState({
       showLayer: show
     });
@@ -88,9 +60,7 @@ class App extends React.Component {
     let people = this.state.data;
 
     if (name.trim() && people.length > 2) {
-      console.log("The data:", this.state.data);
       this.setShowLayer(false);
-      console.log("About to post to ", `${SERVER_URL}/event`);
       axiosInstance.post(`/event`, {
         name: name.substring(0, 30),
         people
@@ -126,7 +96,6 @@ class App extends React.Component {
   }
 
   deleteUser(index) {
-    console.log("Index to delete: ", index);
     let temp = this.state.data;
     temp.splice(index, 1);
     var i;

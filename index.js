@@ -22,10 +22,6 @@ app.use(cors());
 
 app.use(express.static(path.join(__dirname, 'client/build')));
 
-app.get('/api', (request, response) => {
-  response.send("Express API is up and running!");
-});
-
 app.get('/secret/:eventKey/:personalKey', (req, res) => {
     const { eventKey, personalKey } = req.params;
 
