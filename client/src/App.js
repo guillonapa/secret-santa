@@ -52,7 +52,7 @@ class App extends React.Component {
   setShowLayer(show) {
     console.log(`GET ${SERVER_URL}/ about to take place`);
     
-    axiosInstance.get(`/`)
+    axiosInstance.get(`/api`)
       .then(res => {
         console.log("Get / returned: ", res);
       }).catch(function (error) {
