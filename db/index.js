@@ -5,7 +5,7 @@ const cors = require('cors');
 const app = express();
 
 const ENV = process.env;
-const port = ENV.API_PORT; //3001;
+const port = ENV.REACT_APP_API_PORT; //3001;
 
 app.use(bodyParser.json());
 app.use(cors());
