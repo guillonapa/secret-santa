@@ -7,13 +7,13 @@ const app = express();
 const ENV = process.env;
 const port = ENV.REACT_APP_API_PORT; //3001;
 
-app.use(bodyParser.json());
 app.use(cors());
 app.use(
   bodyParser.urlencoded({
     extended: true,
   })
 );
+app.use(bodyParser.json());
 
 app.get('/', (request, response) => {
   response.send("Express API is up and running!");
