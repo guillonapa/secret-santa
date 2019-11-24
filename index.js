@@ -12,12 +12,12 @@ console.log("First: ", ENV.REACT_APP_API_PORT);
 console.log("Second: ", ENV.MAILER_EMAIL);
 
 app.use(cors());
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
-);
-app.use(bodyParser.json());
+// app.use(
+//   bodyParser.urlencoded({
+//     extended: true,
+//   })
+// );
+// app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, 'client/build')));
 
@@ -28,7 +28,7 @@ app.get('/api', (request, response) => {
 // Anything that doesn't match the above, send back the index.html file
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname + 'client/build/index.html'));
-})
+});
 
 // app.post('/event', db.createEvent);
 
