@@ -14,12 +14,12 @@ console.log("First: ", ENV.REACT_APP_API_PORT);
 console.log("Second: ", ENV.MAILER_EMAIL);
 
 app.use(cors());
-// app.use(
-//   bodyParser.urlencoded({
-//     extended: true,
-//   })
-// );
-// app.use(bodyParser.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
+app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, 'client/build')));
 
