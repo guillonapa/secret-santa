@@ -67,11 +67,20 @@ class App extends React.Component {
       }).then(res => {
         // TODO check if res is good (200) then proceed
 
-        this.setState({
-          openNotification: true,
-          notificationMsg: `A new Secret Santa event has been successfully created with key '${res.data}'`,
-          notificationBackground: "status-ok"
-        });
+        if (res && res.data) {
+          this.setState({
+            openNotification: true,
+            notificationMsg: `A new Secret Santa event has been successfully created with key '${res.data}'`,
+            notificationBackground: "status-ok"
+          });
+        } else {
+          this.setState({
+            openNotification: true,
+            notificationMsg: `An errror occurred while attempting to create your event. Please try again later.`,
+            notificationBackground: "status-warning"
+          });
+        }
+
         
       });
     } else {
