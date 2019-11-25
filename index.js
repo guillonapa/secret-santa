@@ -51,7 +51,7 @@ app.get('/secret/:eventKey/:personalKey', (req, res) => {
       });
 });
 
-app.post('/event', (req, res) => {
+app.post('/event', async (req, res) => {
   
   try {
     const { name, people } = req.body
