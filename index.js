@@ -3,6 +3,7 @@ const path = require('path');
 const mountRoutes = require('./routes/index');
 const db = require('./db/index');
 const emailSender = require('./mailer/index');
+const cryptoRandomString = require('crypto-random-string');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
