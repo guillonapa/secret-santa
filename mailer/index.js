@@ -1,7 +1,9 @@
 var nodemailer = require('nodemailer');
 
+// the process environment
 const ENV = process.env;
 
+// configure the transport to send emails
 var transporter = nodemailer.createTransport({
   service: ENV.MAILER_SERVICE,
   auth: {
@@ -10,6 +12,9 @@ var transporter = nodemailer.createTransport({
   }
 });
 
+/**
+ * Sends an email with the event and personal keys to a person.
+ */
 const sendEmail = (eventName, eventKey, element) => {
     var mailOptions = {
         from: ENV.MAILER_EMAIL,
@@ -26,6 +31,9 @@ const sendEmail = (eventName, eventKey, element) => {
     });
 }
 
+/**
+ * Returns a string with the formatted contents of the email for a person.
+ */
 const getBody = (eventKey, name, personalKey) => {
     return `Hi ${name},
 
