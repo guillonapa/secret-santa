@@ -70,7 +70,6 @@ class App extends React.Component {
     }
 
     updateTable(name, email, index) {
-        console.log("XXX", name, email, index);
         let data = this.state.data.slice();
         data[index] = {name, email, index};
         let createDisabled = !this.canCreate(data, this.state.eventName);
