@@ -21,11 +21,11 @@
   "homepage": "https://github.com/guillonapa/secret-santa#readme",
   "dependencies": {
     "cors": "^2.8.5",
-    "crypto-random-string": "^3.0.1",
+    "crypto-random-string": "^3.2.0",
     "express": "^4.17.1",
     "express-promise-router": "^3.0.3",
-    "nodemailer": "^6.3.1",
-    "pg": "^7.12.1",
+    "nodemailer": "^6.4.6",
+    "pg": "^8.2.1",
     "pg-native": "^3.0.0"
   }
 }

@@ -20,7 +20,6 @@ class App extends React.Component {
             eventKey: "",
             personalKey: "",
             secretName: "",
-            classForNonEmptyTable: "show-message",
             eventName: "",
             revealDisabled: true,
             createDisabled: true
@@ -46,7 +45,7 @@ class App extends React.Component {
     }
 
     addPerson(name, email) {
-        let data = this.state.data;
+        let data = this.state.data.slice();
         if (data.length === 1 && data[0].index === -1) {
             data = [];
         }
@@ -55,7 +54,6 @@ class App extends React.Component {
         let createDisabled = !this.canCreate(data, this.state.eventName);
         this.setState({
             data,
-            classForNonEmptyTable: "hide-message",
             createDisabled
         });
     }
@@ -127,28 +125,20 @@ class App extends React.Component {
         }
     }
 
-    newUserEntry(value) {
-        this.addPerson(value.name, value.email);
-        document.querySelector("#newUserForm").reset();
-        document.querySelector("#nameUserForm").focus();
-    }
-
     deleteUser(index) {
-        let data = this.state.data;
+        let data = this.state.data.slice();
         data.splice(index, 1);
         var i;
         for (i = 0; i < data.length; i++) {
             let entry = data[i];
             data[i] = { name: entry.name, email: entry.email, index: i }
         }
-        let classForNonEmptyTable = data.length === 0 ? "" : "hide-message";
         if (data.length === 0) {
             data = [{index: -1}];
         }
         let createDisabled = !this.canCreate(data, this.state.eventName);
         this.setState({
             data,
-            classForNonEmptyTable,
             createDisabled
         });
     }
@@ -170,7 +160,7 @@ class App extends React.Component {
     }
 
     render() {
-        const { data, openNotification, showLayer, showSecretPerson, eventKey, personalKey, revealDisabled, createDisabled, secretName, classForNonEmptyTable, notificationBackground, notificationMsg } = this.state;
+        const { data, openNotification, showLayer, showSecretPerson, eventKey, personalKey, revealDisabled, createDisabled, secretName, notificationBackground, notificationMsg } = this.state;
         return (
             <Grommet theme={hpe}>
 
