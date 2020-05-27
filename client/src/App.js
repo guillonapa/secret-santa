@@ -193,7 +193,7 @@ class App extends React.Component {
                                 <DataTable
                                     pad={{horizontal: 'xxsmall', vertical: 'xxsmall'}}
                                     columns={[
-                                        { property: 'entry', header: (<Box direction="row" align="stretch" justify="stretch"><Box basis="full"><Text>Participant List</Text></Box><Box flex="shrink" justify="end"><Button plain icon={<AddCircle color="status-ok" onClick={() => this.addPerson("", "")}/>}/></Box></Box>), render: datum => (datum.index !== -1 ? 
+                                        { property: 'entry', header: (<Box direction="row" align="stretch" justify="stretch"><Box basis="full"><Text weight="bold" size="large">Participant List</Text></Box><Box flex="shrink" justify="end"><Button plain icon={<AddCircle color="status-ok" onClick={() => this.addPerson("", "")}/>}/></Box></Box>), render: datum => (datum.index !== -1 ? 
                                             (<Box direction="row" gap="small" alignContent="center" align="center">
                                                 <Box alignSelf="center" alignContent="center" flex="grow">
                                                     <FormField>
