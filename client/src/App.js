@@ -13,14 +13,14 @@ class App extends React.Component {
         this.state = {
             showSecretPerson: false,
             showLayer: false,
-            data: [],
+            data: [{index: -1}],
             openNotification: false,
             notificationBackground: "",
             notificationMsg: "",
             eventKey: "",
             personalKey: "",
             secretName: "",
-            classForNonEmptyTable: "",
+            classForNonEmptyTable: "show-message",
             eventName: "",
             revealDisabled: true,
             createDisabled: true
@@ -47,6 +47,9 @@ class App extends React.Component {
 
     addPerson(name, email) {
         let data = this.state.data;
+        if (data.length === 1 && data[0].index === -1) {
+            data = [];
+        }
         let index = data.length;
         data.push({ name, email, index })
         let createDisabled = !this.canCreate(data, this.state.eventName);
@@ -61,7 +64,7 @@ class App extends React.Component {
         var i;
         for (i = 0; i < data.length; i++) {
             let entry = data[i];
-            if (entry.name === "" || entry.email === "") {
+            if (entry.index === -1 || entry.name === "" || entry.email === "") {
                 return false;
             }
         }
@@ -139,6 +142,9 @@ class App extends React.Component {
             data[i] = { name: entry.name, email: entry.email, index: i }
         }
         let classForNonEmptyTable = data.length === 0 ? "" : "hide-message";
+        if (data.length === 0) {
+            data = [{index: -1}];
+        }
         let createDisabled = !this.canCreate(data, this.state.eventName);
         this.setState({
             data,
@@ -172,10 +178,10 @@ class App extends React.Component {
                 {showLayer ?
                     <Layer overflow="scroll" full={true} position="right" onEsc={() => { this.setShowLayer(false) }} onClickOutside={() => { this.setShowLayer(false) }}>
                         <Box overflow="auto" widht="full" height="full" gap="medium" pad="medium">
-                            <Box flex="grow" overflow="auto" gap="medium" pad={{horizontal: 'medium', vertical: 'xsmall'}} margin={{vertical: 'xsmall'}}>
+                            <Button alignSelf="end" plain icon={<Close className="close-button" onClick={() => this.setShowLayer(false)} />} />
+                            <Box flex="grow" overflow="auto" gap="medium" pad={{horizontal: 'medium', vertical: 'xsmall'}} margin={{vertical: 'xsmall'}} alignSelf="center" align="center" width="large">
                                 <Box justify="between" flex="grow" overflow="auto" direction="row" >
-                                    <Heading margin="none" level="1">New Secret Santa Event</Heading>
-                                    <Button alignSelf="start" plain icon={<Close className="close-button" onClick={() => this.setShowLayer(false)} />} />
+                                    <Heading margin="none" level="2">New Secret Santa Event</Heading>
                                 </Box>
                                 <Text>Enter a name for your event and add all your guests to the list. After the event is created, everyone will receive an email with the event key and their unique personal key. These keys can be used to reveal to whom will they be giving a gift this year.</Text>
                                 <Box flex="grow" overflow="auto" direction="row" fill="horizontal" align="center" gap="small" >
@@ -183,23 +189,35 @@ class App extends React.Component {
                                 </Box>
                             </Box>
 
-                            <Box pad={{horizontal: 'medium', vertical: 'xsmall'}} flex="grow" margin={{vertical: 'xsmall'}}>
+                            <Box flex="grow" gap="medium" pad={{horizontal: 'medium', vertical: 'xsmall'}} margin={{vertical: 'xsmall'}} alignSelf="center" align="center">
                                 <DataTable
                                     pad={{horizontal: 'xxsmall', vertical: 'xxsmall'}}
                                     columns={[
-                                        { property: 'nameField', header: 'Participant List', render: datum => (<FormField><TextInput value={datum.name} placeholder="Name..." onChange={(event) => this.updateTable(event.target.value, datum.email, datum.index)}></TextInput></FormField>)},
-                                        { property: 'emailField', header: '', render: datum => (<FormField><TextInput value={datum.email} placeholder="Email..." onChange={(event) => this.updateTable(datum.name, event.target.value, datum.index)}></TextInput></FormField>)},
-                                        { property: 'remove', align: 'end', header: (<Box direction="row" justify="end"><Button plain icon={<AddCircle color="status-ok" onClick={() => this.addPerson("", "")}/>}/></Box>), render: datum => (
-                                                <Box><Button plain icon={<Trash color="status-warning" onClick={() => this.deleteUser(datum.index)}/>}/></Box>)}
+                                        { property: 'entry', header: (<Box direction="row" align="stretch" justify="stretch"><Box basis="full"><Text>Participant List</Text></Box><Box flex="shrink" justify="end"><Button plain icon={<AddCircle color="status-ok" onClick={() => this.addPerson("", "")}/>}/></Box></Box>), render: datum => (datum.index !== -1 ? 
+                                            (<Box direction="row" gap="small" alignContent="center" align="center">
+                                                <Box alignSelf="center" alignContent="center" flex="grow">
+                                                    <FormField>
+                                                        <TextInput value={datum.name} placeholder="Name..." onChange={(event) => this.updateTable(event.target.value, datum.email, datum.index)}></TextInput>
+                                                    </FormField>
+                                                </Box>
+                                                <Box alignSelf="center" alignContent="center" flex="grow">
+                                                    <FormField>
+                                                        <TextInput value={datum.email} placeholder="Email..." onChange={(event) => this.updateTable(datum.name, event.target.value, datum.index)}></TextInput>
+                                                    </FormField>
+                                                </Box>
+                                                <Box alignSelf="center" flex="shrink"><Button plain icon={<Trash color="status-warning" onClick={() => this.deleteUser(datum.index)}/>}/></Box>
+                                            </Box>)
+                                            : <Text margin={{left: 'medium', top: 'medium'}}>No people have been added to the list...</Text>)}
                                     ]}
                                     data={data}
+                                    alignSelf="stretch"
+                                    size="large"
                                 />
-                                <Text margin="small" className={classForNonEmptyTable} wordBreak="break-all">No people have been added to the list...</Text>
                             </Box>
                             
 
                             {/* Box with submit and cancel buttons */}
-                            <Box flex="grow" overflow="auto" fill="horizontal" direction="row-reverse" align="end" pad="small" gap="small" >
+                            <Box flex="grow" overflow="auto" fill="horizontal" direction="row-reverse" align="center" pad="small" gap="small" alignSelf="center" width="large" >
                                 <Button type="submit" primary label="Create" onClick={() => { this.getUsers() }} disabled={createDisabled} />
                                 <Button type="button" label="Cancel" onClick={() => { this.setShowLayer(false) }} />
                             </Box>
@@ -224,7 +242,8 @@ class App extends React.Component {
                 <Box pad="small" align="end" alignContent="end" direction="row" justify="end">Create Event&nbsp;<Add className="add-button" onClick={() => { this.setShowLayer(true) }}></Add></Box>
                 <Box pad="large">
                     <Box gap="medium" pad="medium" round="small" animation="slideDown" width="medium" alignSelf="center" align="center">
-                        <h1>Welcome, Santa.</h1>
+                        {/* <h1>Welcome, Santa.</h1> */}
+                        <Heading margin="none" level="2">Welcome, Santa.</Heading>
                         <Box alignSelf="center" align="center">
                             <Paragraph margin="none">Enter your event and personal keys to reveal to whom you will be giving a gift.</Paragraph>
                         </Box>
