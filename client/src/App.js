@@ -70,7 +70,8 @@ class App extends React.Component {
     }
 
     updateTable(name, email, index) {
-        let data = this.state.data;
+        console.log("XXX", name, email, index);
+        let data = this.state.data.slice();
         data[index] = {name, email, index};
         let createDisabled = !this.canCreate(data, this.state.eventName);
         this.setState({
@@ -89,7 +90,7 @@ class App extends React.Component {
 
     getUsers() {
         let name = this.state.eventName;
-        let people = this.state.data;
+        let people = this.state.data.slice();
         if (name.trim() && people.length > 2) {
             this.setShowLayer(false);
             axiosInstance.post(`/event`, {
