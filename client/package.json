@@ -7,6 +7,7 @@
     "grommet": "^2.7.11",
     "grommet-icons": "^4.3.0",
     "grommet-theme-aruba": "^0.1.2",
+    "grommet-theme-hpe": "^1.0.5",
     "pg": "^7.12.1",
     "pg-native": "^3.0.0",
     "react": "^16.11.0",

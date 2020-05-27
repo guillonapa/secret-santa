@@ -1,292 +1,256 @@
 import React from 'react';
 import axios from 'axios';
-import { Box, Button, Collapsible, DataTable, Form, FormField, Grommet, Heading, Layer, Paragraph, Text, TextInput } from 'grommet';
-import { Add, FormClose, StatusInfo, Trash, Close } from 'grommet-icons';
-import { aruba } from 'grommet-theme-aruba';
-
-const ENV = process.env;
-const SERVER_URL = `http://localhost:${ENV.REACT_APP_API_PORT}`;
+import { Box, Button, Collapsible, DataTable, FormField, Grommet, Heading, Layer, Paragraph, Text, TextInput } from 'grommet';
+import { Add, FormClose, StatusInfo, Trash, Close, AddCircle } from 'grommet-icons';
+import { hpe } from 'grommet-theme-hpe';
 
 const axiosInstance = axios.create();
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showKeyInput: false,
-      showSecretPerson: false,
-      showLayer: false,
-      data: [],
-      openNotification: false,
-      notificationBackground: "", // 'status-ok'
-      notificationMsg: "",
-      eventKey: "",
-      secretName: "",
-      classForNonEmptyTable: "",
-      eventName: ""
-    }
-  }
-  
-  showSecret(body, eventKey) {
-    axiosInstance.get(`/secret/${eventKey}/${body.value.key}`)
-      .then(res => {
-        this.setState({
-          showKeyInput: false,
-          showSecretPerson: true,
-          secretName: res.data
-        });
-      });
-    
-  }
 
-  setShowLayer(show) {
-    this.setState({
-      showLayer: show
-    });
-  }
-
-  addPerson(name, email) {
-    let temp = this.state.data;
-    let index = temp.length;
-    temp.push({name, email, index})
-    this.setState({
-      data: temp,
-      classForNonEmptyTable: "hide-message"
-    });
-  }
-
-  getUsers() {
-    let name = this.state.eventName;
-    let people = this.state.data;
-
-    if (name.trim() && people.length > 2) {
-      this.setShowLayer(false);
-      axiosInstance.post(`/event`, {
-        name: name.substring(0, 30),
-        people
-      }).then(res => {
-        // TODO check if res is good (200) then proceed
-
-        if (res && res.data) {
-          this.setState({
-            openNotification: true,
-            notificationMsg: `A new Secret Santa event has been successfully created with key '${res.data}'`,
-            notificationBackground: "status-ok"
-          });
-        } else {
-          this.setState({
-            openNotification: true,
-            notificationMsg: `An errror occurred while attempting to create your event. Please try again later.`,
-            notificationBackground: "status-warning"
-          });
+    constructor(props) {
+        super(props);
+        this.state = {
+            showSecretPerson: false,
+            showLayer: false,
+            data: [],
+            openNotification: false,
+            notificationBackground: "",
+            notificationMsg: "",
+            eventKey: "",
+            personalKey: "",
+            secretName: "",
+            classForNonEmptyTable: "",
+            eventName: "",
+            revealDisabled: true,
+            createDisabled: true
         }
+    }
 
-        
-      });
-    } else {
-      let errorMsg = !(name.trim()) ? "You must enter a name for the event" : "You must add at least 3 people to create an event";
-      this.setState({
-        openNotification: true,
-        notificationMsg: errorMsg,
-        notificationBackground: "status-warning"
-      });
-      setTimeout(() => {
+    showSecret(eventKey, personalKey) {
+        axiosInstance.get(`/secret/${eventKey}/${personalKey}`)
+            .then(res => {
+                this.setState({
+                    showKeyInput: false,
+                    showSecretPerson: true,
+                    secretName: res.data
+                });
+            });
+
+    }
+
+    setShowLayer(show) {
         this.setState({
-          openNotification: false
+            showLayer: show
         });
-      }, 5000);
     }
-  }
 
-  newUserEntry(value) {
-    this.addPerson(value.name, value.email);
-    document.querySelector("#newUserForm").reset();
-    document.querySelector("#nameUserForm").focus();
-  }
-
-  deleteUser(index) {
-    let temp = this.state.data;
-    temp.splice(index, 1);
-    var i;
-    for (i = 0; i < temp.length; i++) {
-      let tempData = temp[i];
-      temp[i] = {name: tempData.name, email: tempData.email, index: i}
+    addPerson(name, email) {
+        let data = this.state.data;
+        let index = data.length;
+        data.push({ name, email, index })
+        let createDisabled = !this.canCreate(data, this.state.eventName);
+        this.setState({
+            data,
+            classForNonEmptyTable: "hide-message",
+            createDisabled
+        });
     }
-    let classForNonEmptyTable = temp.length === 0 ? "" : "hide-message";
-    this.setState({
-      data: temp,
-      classForNonEmptyTable
-    });
-  }
 
-  setEventKey(eventKey) {
-    this.setState({
-      eventKey,
-      showKeyInput: true
-    });
-  }
+    canCreate(data, eventName) {
+        var i;
+        for (i = 0; i < data.length; i++) {
+            let entry = data[i];
+            if (entry.name === "" || entry.email === "") {
+                return false;
+            }
+        }
+        return eventName !== "";
+    }
 
-  render() {
-    const { data, openNotification, showLayer, showKeyInput, showSecretPerson, eventKey, secretName, classForNonEmptyTable, notificationBackground, notificationMsg } = this.state;
-      return (
-        <Grommet theme={aruba}>
+    updateTable(name, email, index) {
+        let data = this.state.data;
+        data[index] = {name, email, index};
+        let createDisabled = !this.canCreate(data, this.state.eventName);
+        this.setState({
+            data,
+            createDisabled
+        });
+    }
 
-          {showLayer && <Layer overflow="scroll" full="vertical" width="xlarge" position="right" onEsc={() => {this.setShowLayer(false)}} onClickOutside={() => {this.setShowLayer(false)}}>
+    updateEventName(eventName) {
+        let createDisabled = !this.canCreate(this.state.data, eventName);
+        this.setState({
+            eventName,
+            createDisabled
+        });
+    }
 
-            <Box overflow="auto" widht="full" height="full" gap="medium" pad="medium">
-              <Box flex="grow" overflow="auto" width="xlarge" gap="medium" pad="medium">
-                <Box justify="between" flex="grow" overflow="auto" direction="row" >
-                  <Heading margin="none" level="1">New Event</Heading>
-                  <Button plain icon={<Close className="close-button" onClick={() => this.setShowLayer(false)} />}/>
-                </Box>
-                <Text>
-                  Santa is coming to town... Enter a name for your event and add all your guests to the list. After the event is created, everyone in the list will receive an email with a personal key that they can use to find out who will be the lucky one.
-                </Text>
-                <Box flex="grow" overflow="auto" direction="row" fill="horizontal" align="center" gap="small" >
-                  <Text wordBreak="normal">Name:</Text>
-                  <TextInput placeholder="Enter a name..." onChange={(event) => { this.setState({ eventName: event.target.value }) }}/>
-                </Box>
-              </Box>
+    getUsers() {
+        let name = this.state.eventName;
+        let people = this.state.data;
+        if (name.trim() && people.length > 2) {
+            this.setShowLayer(false);
+            axiosInstance.post(`/event`, {
+                name: name.substring(0, 30),
+                people
+            }).then(res => {
+                if (res && res.data) {
+                    this.setState({
+                        openNotification: true,
+                        notificationMsg: `A new Secret Santa event has been successfully created with key '${res.data}'`,
+                        notificationBackground: "status-ok"
+                    });
+                } else {
+                    this.setState({
+                        openNotification: true,
+                        notificationMsg: `An errror occurred while attempting to create your event. Please try again later.`,
+                        notificationBackground: "status-warning"
+                    });
+                }
+            });
+        } else {
+            let errorMsg = !(name.trim()) ? "You must enter a name for the event" : "You must add at least 3 people to create an event";
+            this.setState({
+                openNotification: true,
+                notificationMsg: errorMsg,
+                notificationBackground: "status-warning"
+            });
+            setTimeout(() => {
+                this.setState({
+                    openNotification: false
+                });
+            }, 5000);
+        }
+    }
 
-              <Box flex="grow" overflow="auto" direction="row-responsive" width="xlarge" gap="medium" pad="medium">
-                {/* Box to add new people to the list */}
-                <Box flex="grow" overflow="auto" gap="medium" pad="large" round border={{ color: 'brand' }}>
-                  {/* <Heading level="3">New Participant</Heading> */}
-                  <Form align="start" onSubmit={(event) => this.newUserEntry(event.value)} id="newUserForm">
-                    <FormField name="name" label="name" required={true} id="nameUserForm" />
-                    <FormField name="email" label="email" required={true} />
-                    <Button type="submit" primary label="Add Person" margin={{ top: 'medium' }} />
-                  </Form>
-                </Box>
-                {/* Box to display the list of all people in the event */}
-                <Box flex="grow" overflow="auto" gap="medium" pad="large" round border={{ color: 'brand' }}>
-                  {/* <Heading level="3">Current List</Heading> */}
-                  <Box overflow="auto">
-                    <DataTable
-                      pad="small"
-                      columns={[
-                        {
-                          property: 'name',
-                          header: <Text>Name</Text>
-                        },
-                        {
-                          property: 'email',
-                          header: 'Email'
-                        },
-                        {
-                          property: 'remove',
-                          header: '',
-                          render: datum => (
-                            <Box>
-                              <Button plain icon={<Trash color="accent-4" className="delete-icon" onClick={() => this.deleteUser(datum.index)} />}/>
+    newUserEntry(value) {
+        this.addPerson(value.name, value.email);
+        document.querySelector("#newUserForm").reset();
+        document.querySelector("#nameUserForm").focus();
+    }
+
+    deleteUser(index) {
+        let data = this.state.data;
+        data.splice(index, 1);
+        var i;
+        for (i = 0; i < data.length; i++) {
+            let entry = data[i];
+            data[i] = { name: entry.name, email: entry.email, index: i }
+        }
+        let classForNonEmptyTable = data.length === 0 ? "" : "hide-message";
+        let createDisabled = !this.canCreate(data, this.state.eventName);
+        this.setState({
+            data,
+            classForNonEmptyTable,
+            createDisabled
+        });
+    }
+
+    setEventKey(eventKey) {
+        let revealDisabled = this.state.personalKey === "" || eventKey === "";
+        this.setState({
+            eventKey,
+            revealDisabled
+        });
+    }
+
+    setPersonalKey(personalKey) {
+        let revealDisabled = this.state.eventKey === "" || personalKey === "";
+        this.setState({
+            personalKey,
+            revealDisabled
+        });
+    }
+
+    render() {
+        const { data, openNotification, showLayer, showSecretPerson, eventKey, personalKey, revealDisabled, createDisabled, secretName, classForNonEmptyTable, notificationBackground, notificationMsg } = this.state;
+        return (
+            <Grommet theme={hpe}>
+
+                {/* --- Drawer to create an event --- */}
+                {showLayer ?
+                    <Layer overflow="scroll" full={true} position="right" onEsc={() => { this.setShowLayer(false) }} onClickOutside={() => { this.setShowLayer(false) }}>
+                        <Box overflow="auto" widht="full" height="full" gap="medium" pad="medium">
+                            <Box flex="grow" overflow="auto" gap="medium" pad={{horizontal: 'medium', vertical: 'xsmall'}} margin={{vertical: 'xsmall'}}>
+                                <Box justify="between" flex="grow" overflow="auto" direction="row" >
+                                    <Heading margin="none" level="1">New Secret Santa Event</Heading>
+                                    <Button alignSelf="start" plain icon={<Close className="close-button" onClick={() => this.setShowLayer(false)} />} />
+                                </Box>
+                                <Text>Enter a name for your event and add all your guests to the list. After the event is created, everyone will receive an email with the event key and their unique personal key. These keys can be used to reveal to whom will they be giving a gift this year.</Text>
+                                <Box flex="grow" overflow="auto" direction="row" fill="horizontal" align="center" gap="small" >
+                                    <TextInput placeholder="Event Name..." onChange={(event) => { this.updateEventName(event.target.value) }} />
+                                </Box>
                             </Box>
-                          )
-                        }
-                      ]}
-                      data={data}
-                    />
-                    <Text margin="small" className={classForNonEmptyTable} wordBreak="break-all">
-                      No people have been added
-                    </Text>
-                  </Box>
-                </Box>
-              </Box>
-              <Box flex="grow" overflow="auto" direction="row" width="xlarge" gap="medium" pad="medium">
-                {/* Box with submit and cancel buttons */}
-                <Box flex="grow" overflow="auto" width="xlarge" fill="horizontal" direction="row-reverse" align="end" pad="small" gap="small" >
-                  <Button type="submit" primary label="Create" onClick={() => {this.getUsers()}} />
-                  <Button type="button" label="Cancel" onClick={() => {this.setShowLayer(false)}} />
-                </Box>
-              </Box>
 
-            </Box>
+                            <Box pad={{horizontal: 'medium', vertical: 'xsmall'}} flex="grow" margin={{vertical: 'xsmall'}}>
+                                <DataTable
+                                    pad={{horizontal: 'xxsmall', vertical: 'xxsmall'}}
+                                    columns={[
+                                        { property: 'nameField', header: 'Participant List', render: datum => (<FormField><TextInput value={datum.name} placeholder="Name..." onChange={(event) => this.updateTable(event.target.value, datum.email, datum.index)}></TextInput></FormField>)},
+                                        { property: 'emailField', header: '', render: datum => (<FormField><TextInput value={datum.email} placeholder="Email..." onChange={(event) => this.updateTable(datum.name, event.target.value, datum.index)}></TextInput></FormField>)},
+                                        { property: 'remove', align: 'end', header: (<Box direction="row" justify="end"><Button plain icon={<AddCircle color="status-ok" onClick={() => this.addPerson("", "")}/>}/></Box>), render: datum => (
+                                                <Box><Button plain icon={<Trash color="status-warning" onClick={() => this.deleteUser(datum.index)}/>}/></Box>)}
+                                    ]}
+                                    data={data}
+                                />
+                                <Text margin="small" className={classForNonEmptyTable} wordBreak="break-all">No people have been added to the list...</Text>
+                            </Box>
+                            
 
+                            {/* Box with submit and cancel buttons */}
+                            <Box flex="grow" overflow="auto" fill="horizontal" direction="row-reverse" align="end" pad="small" gap="small" >
+                                <Button type="submit" primary label="Create" onClick={() => { this.getUsers() }} disabled={createDisabled} />
+                                <Button type="button" label="Cancel" onClick={() => { this.setShowLayer(false) }} />
+                            </Box>
+                        </Box>
+                    </Layer>
+                : ""}
 
-          </Layer>}
+                {/* --- Notification --- */}
+                {openNotification ?
+                    <Layer position="bottom" modal={false} margin={{ vertical: "medium", horizontal: "small" }} responsive={false} plain>
+                        <Box align="center" direction="row" gap="small" justify="between" round="medium" elevation="medium" pad={{ vertical: "small", horizontal: "medium" }} background={notificationBackground}>
+                            <Box align="center" direction="row" gap="small">
+                                <StatusInfo/>
+                                <Text>{notificationMsg}</Text>
+                            </Box>
+                            <Button icon={<FormClose onClick={() => { this.setState({ openNotification: false }) }} />} plain />
+                        </Box>
+                    </Layer>
+                : ""}
 
-          {openNotification && 
-          <Layer
-            position="bottom"
-            modal={false}
-            margin={{ vertical: "medium", horizontal: "small" }}
-            // onEsc={onClose}
-            responsive={false}
-            plain >
-            <Box
-              align="center"
-              direction="row"
-              gap="small"
-              justify="between"
-              round="medium"
-              elevation="medium"
-              pad={{ vertical: "small", horizontal: "medium" }}
-              background={notificationBackground}
-            >
-              <Box align="center" direction="row" gap="small">
-                <StatusInfo />
-                <Text>{notificationMsg}</Text>
-              </Box>
-              <Button icon={<FormClose onClick={() => { this.setState({ openNotification: false })} } />} plain />
-            </Box>
-          </Layer>}
-
-          <Box pad="small" align="end" >
-            <Add className="add-button" onClick={() => {this.setShowLayer(true)}}></Add>
-          </Box>
-          <Box pad="large">
-            <Box gap="medium" pad="medium"  round="small" animation="slideDown" width="medium" alignSelf="center" align="center">
-              <h1>Welcome, Santa.</h1>
-              <Box alignSelf="center" align="center">
-                <Paragraph margin="none">
-                  Enter your event and personal keys to reveal
-                  who will be on your "nice" list.
-                </Paragraph>
-              </Box>
-              <Box fill="horizontal">
-                {/* <Select
-                  options={[
-                    'Guillermo Narvaez Paliza', 
-                    'Laura Broffman',
-                    'Ana Sofia Narvaez Paliza',
-                    'Jose Narvaez Paliza', 
-                    'Jose Max Narvaez Paliza',
-                    'Sofia Paliza Castilla',
-                    'Guillermo Narvaez Lora'
-                  ]}
-                  value={user}
-                  onChange={({ option }) => {this.setUser(option)}}
-                /> */}
-                <TextInput
-                  placeholder="Enter event key"
-                  value={eventKey}
-                  onChange={event => this.setEventKey(event.target.value)}
-                />
-              </Box>
-              <Box fill="horizontal">
-                <Collapsible fill="horizontal" direction="vertical" open={showKeyInput}>
-                  <Box fill="horizontal" flex>
-                    <Form onSubmit={(body) => this.showSecret(body, eventKey)}>
-                      <FormField name="key" label="" />
-                      <Button type="submit" primary label="Reveal" />
-                    </Form>
-                  </Box>
-                </Collapsible>
-              </Box>
-              <Box fill="horizontal">
-                <Collapsible fill="horizontal" direction="vertical" open={showSecretPerson}>
-                  <Box flex fill="horizontal" alignSelf="center" align="center">
-                    <h3>You will give a present to:</h3>
-                    <Box>
-                      <p>{secretName}</p>
+                {/* --- Main body of the page --- */}
+                <Box pad="small" align="end" alignContent="end" direction="row" justify="end">Create Event&nbsp;<Add className="add-button" onClick={() => { this.setShowLayer(true) }}></Add></Box>
+                <Box pad="large">
+                    <Box gap="medium" pad="medium" round="small" animation="slideDown" width="medium" alignSelf="center" align="center">
+                        <h1>Welcome, Santa.</h1>
+                        <Box alignSelf="center" align="center">
+                            <Paragraph margin="none">Enter your event and personal keys to reveal to whom you will be giving a gift.</Paragraph>
+                        </Box>
+                        <Box fill="horizontal">
+                            <TextInput placeholder="Event Key..." value={eventKey} onChange={event => this.setEventKey(event.target.value)}/>
+                        </Box>
+                        <Box fill="horizontal">
+                            <TextInput placeholder="Personal Key..." value={personalKey} onChange={event => this.setPersonalKey(event.target.value)}/>
+                        </Box>
+                        <Box fill="horizontal" flex>
+                            <Button type="submit" primary label="Reveal" onClick={() => this.showSecret(eventKey, personalKey)} disabled={revealDisabled}/>
+                        </Box>
+                        <Box fill="horizontal">
+                            <Collapsible fill="horizontal" direction="vertical" open={showSecretPerson}>
+                                <Box flex fill="horizontal" alignSelf="center" align="center">
+                                    <h3>You will give a present to:</h3>
+                                    <Box><p>{secretName}</p></Box>
+                                </Box>
+                            </Collapsible>
+                        </Box>
                     </Box>
-                  </Box>
-                </Collapsible>
-              </Box>
-            </Box>
-          </Box>
-        </Grommet>
-      );
-  }
+                </Box>
+
+            </Grommet>
+        );
+    }
 }
 
 export default App;
