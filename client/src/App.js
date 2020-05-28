@@ -27,10 +27,10 @@ class App extends React.Component {
     }
 
     showSecret(eventKey, personalKey) {
+        console.log(eventKey, personalKey);
         axiosInstance.get(`/secret/${eventKey}/${personalKey}`)
             .then(res => {
                 this.setState({
-                    showKeyInput: false,
                     showSecretPerson: true,
                     secretName: res.data
                 });
