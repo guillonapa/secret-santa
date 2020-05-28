@@ -36,16 +36,16 @@ app.get('/secret/:eventKey/:personalKey', async (req, res) => {
         // make sure the a single row is returned
         const { rows } = result;
         if (!rows || rows.length != 1) {
-            res.send(errMsg);
+            res.send(errMsg.toString());
             return;
         }
 
         // return the name of the secret person
         const name = rows[0].name;
-        res.send(name ? name : errMsg);
+        res.send(name ? name : errMsg.toString());
     } catch (err) {
         errMsg.push(err);
-        res.send(errMsg);
+        res.send(errMsg.toString());
     }
 });
 
