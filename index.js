@@ -25,27 +25,24 @@ app.use(express.static(path.join(__dirname, 'client/build')));
  */
 app.get('/secret/:eventKey/:personalKey', async (req, res) => {
     const { eventKey, personalKey } = req.params;
-    // let errMsg = "Something is not right... Check your keys and try again";
-    let errMsg = [eventKey, personalKey];
+    const errMsg = "They keys used are invalid. Please try again.";
 
     try {
         // get the person who's key is the same as the one for the person's matched key
         const result = await db.query(`SELECT name FROM people WHERE personal_key IN (SELECT match FROM people WHERE personal_key = '${personalKey}' AND event_key = '${eventKey}')`);
-        errMsg.push(result);
 
         // make sure the a single row is returned
         const { rows } = result;
         if (!rows || rows.length != 1) {
-            res.send(errMsg.toString());
+            res.send(errMsg);
             return;
         }
 
         // return the name of the secret person
         const name = rows[0].name;
-        res.send(name ? name : errMsg.toString());
+        res.send(name ? name : errMsg);
     } catch (err) {
-        errMsg.push(err);
-        res.send(errMsg.toString());
+        res.send("An internal error has occurred. Please contact the administrator for further help.");
     }
 });
 
