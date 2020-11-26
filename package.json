@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "dev": "nodemon ./server.js localhost 3080",
     "build": "cd client && npm run-script build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "heroku-postbuild": "cd client && npm install && npm run build"
@@ -27,5 +28,8 @@
     "nodemailer": "^6.4.6",
     "pg": "^8.2.1",
     "pg-native": "^3.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
   }
 }

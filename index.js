@@ -17,7 +17,7 @@ app.use(
 );
 app.use(bodyParser.json());
 
-app.use(express.static(path.join(__dirname, 'client/build')));
+// app.use(express.static(path.join(__dirname, 'client/build')));
 
 /**
  * Get the secret person for the specific person and event based on the
@@ -126,11 +126,12 @@ app.post('/event', async (req, res) => {
 
 // Anything that doesn't match the above, send back the index.html file
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname + 'client/build/index.html'));
+    // res.sendFile(path.join(__dirname + 'client/build/index.html'));
+    res.send('App Works !!!!');
 });
 
 // get a port for the app to listen at
-const port = process.env.PORT || process.env.REACT_APP_API_PORT;
+const port = process.env.PORT || process.env.REACT_APP_API_PORT || 3080;
 
 // start listening for rest calls
 app.listen(port, () => {
