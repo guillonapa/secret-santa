@@ -16,8 +16,7 @@ app.use(
     })
 );
 app.use(bodyParser.json());
-
-// app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.static(path.join(__dirname, '../client/build')));
 
 /**
  * Get the secret person for the specific person and event based on the
@@ -50,11 +49,11 @@ app.get('/secret/:eventKey/:personalKey', async (req, res) => {
  * Converts the array of people into comma separated 'objects' represented by
  * comma separated values within parentheses.
  */
-const stringifyPeopleResult = (people) => {
+const stringifyPeopleResult = (people,key) => {
     let i = 0;
     let result = '';
     people.forEach(person => {
-        values += `('${person.name}', '${person.email}', '${key}', '${person.personalKey}', '${person.match}')`;
+        result += `('${person.name}', '${person.email}', '${key}', '${person.personalKey}', '${person.match}')`;
         if (++i < people.length) {
             result += ', ';
         }
@@ -112,22 +111,21 @@ app.post('/event', async (req, res) => {
         });
 
         // insert all people with their respective match into db
-        await db.query(`INSERT INTO people (name, email, event_key, personal_key, match) VALUES ${stringifyPeopleResult(matchedPeopleArray)}`);
-        
+        await db.query(`INSERT INTO people (name, email, event_key, personal_key, match) VALUES ${stringifyPeopleResult(matchedPeopleArray,key)}`);
         // send emails to each person with event and personal keys
         emailSender.email(name, key, matchedPeopleArray);
 
         // return the key of the event
         res.send(`${key}`);
     } catch (err) {
+        console.log(err)
         res.send("");
     }
 });
 
 // Anything that doesn't match the above, send back the index.html file
 app.get('*', (req, res) => {
-    // res.sendFile(path.join(__dirname + 'client/build/index.html'));
-    res.send('App Works !!!!');
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
 
 // get a port for the app to listen at
