@@ -1,16 +1,33 @@
 var nodemailer = require('nodemailer');
+const { google } = require("googleapis");
+const OAuth2 = google.auth.OAuth2;
 
 // the process environment
 const ENV = process.env;
 
-// configure the transport to send emails
-var transporter = nodemailer.createTransport({
-  service: ENV.MAILER_SERVICE,
-  auth: {
-    user: ENV.MAILER_EMAIL,
-    pass: ENV.MAILER_PW
-  }
+
+const myOAuth2Client = new OAuth2(
+    ENV.CLIENT_ID,
+    ENV.CLIENT_SECRET,
+    "https://developers.google.com/oauthplayground"
+)
+
+myOAuth2Client.setCredentials({
+    refresh_token: ENV.TOKEN_REFRESH
 });
+
+const myAccessToken = myOAuth2Client.getAccessToken()
+
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+         type: "OAuth2",
+         user: ENV.MAILER_EMAIL,
+         clientId: ENV.CLIENT_ID,
+         clientSecret: ENV.CLIENT_SECRET,
+         refreshToken: ENV.TOKEN_REFRESH,
+         accessToken: myAccessToken 
+}});
 
 /**
  * Sends an email with the event and personal keys to a person.
