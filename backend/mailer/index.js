@@ -54,7 +54,7 @@ const sendEmail = (eventName, eventKey, element) => {
 const getBody = (eventKey, name, personalKey) => {
     return `Hi ${name},
 
-You have been added to a new secret santa event. Log in to https://secret-santa-events.herokuapp.com/ with your event and personal key to see who you will give a gift to this year.
+You have been added to a new secret santa event. Log in to ${ENV.WEBSITE_URL} with your event and personal key to see who you will give a gift to this year.
 
     Event Key: ${eventKey}
     Personal Key: ${personalKey}
