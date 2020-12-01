@@ -235,7 +235,7 @@ class App extends React.Component {
                         {/* <h1>Welcome, Santa.</h1> */}
                         <Heading margin="none" level="2">Welcome, Santa.</Heading>
                         <Box alignSelf="center" align="center">
-                            <Paragraph margin="none">Enter your event ID and personal keys to reveal to whom you will be giving a gift.</Paragraph>
+                            <Paragraph margin="none">Enter your event ID and personal key to reveal to whom you will be giving a gift.</Paragraph>
                         </Box>
                         <Box fill="horizontal">
                             <TextInput placeholder="Event ID" value={eventKey} onChange={event => this.setEventKey(event.target.value)}/>
