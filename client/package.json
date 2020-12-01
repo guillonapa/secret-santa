@@ -17,14 +17,14 @@
     "styled-components": "^5.1.1"
   },
   "scripts": {
-    "start": "serve -s build",
+    "start": "react-scripts start",
     "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "heroku-postbuild": "npm run build"
   },
-  "proxy": "http://localhost:3001",
+  "proxy": "http://localhost:3080",
   "eslintConfig": {
     "extends": "react-app"
   },
@@ -39,5 +39,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
   }
 }
