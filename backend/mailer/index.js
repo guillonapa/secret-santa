@@ -54,9 +54,9 @@ const sendEmail = (eventName, eventKey, element) => {
 const getBody = (eventKey, name, personalKey) => {
     return `Hi ${name},
 
-You have been added to a new secret santa event. Log in to ${ENV.WEBSITE_URL} with your event and personal key to see who you will give a gift to this year.
+You have been added to a new secret santa event. Log in to ${ENV.WEBSITE_URL} with your event ID and personal key to see who you will give a gift to this year.
 
-    Event Key: ${eventKey}
+    Event ID: ${eventKey}
     Personal Key: ${personalKey}
     
 Ho-ho-ho,

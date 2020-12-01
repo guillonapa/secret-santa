@@ -235,13 +235,13 @@ class App extends React.Component {
                         {/* <h1>Welcome, Santa.</h1> */}
                         <Heading margin="none" level="2">Welcome, Santa.</Heading>
                         <Box alignSelf="center" align="center">
-                            <Paragraph margin="none">Enter your event and personal keys to reveal to whom you will be giving a gift.</Paragraph>
+                            <Paragraph margin="none">Enter your event ID and personal keys to reveal to whom you will be giving a gift.</Paragraph>
                         </Box>
                         <Box fill="horizontal">
-                            <TextInput placeholder="Event Key..." value={eventKey} onChange={event => this.setEventKey(event.target.value)}/>
+                            <TextInput placeholder="Event ID" value={eventKey} onChange={event => this.setEventKey(event.target.value)}/>
                         </Box>
                         <Box fill="horizontal">
-                            <TextInput placeholder="Personal Key..." value={personalKey} onChange={event => this.setPersonalKey(event.target.value)}/>
+                            <TextInput placeholder="Personal key" value={personalKey} onChange={event => this.setPersonalKey(event.target.value)}/>
                         </Box>
                         <Box fill="horizontal" flex>
                             <Button type="submit" primary label="Reveal" onClick={() => this.showSecret(eventKey, personalKey)} disabled={revealDisabled}/>
