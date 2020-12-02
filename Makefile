@@ -1,8 +1,4 @@
 #!make
-
-# exports the needed environment variables
-include envfile
-
 # prefix for info messages
 ECHO_PREFIX := >>>
 
@@ -61,46 +57,19 @@ local-frontend:
 	cd client; \
 	npm start
 
-# checks if the image exists or not
-IMAGE_EXITSTS := "false"
-IMAGE_ID := $(shell docker images -q santa-app)
-ifneq ($(IMAGE_ID), )
-IMAGE_EXITSTS := "true"
-endif
-CONTAINER_RUNNING := "false"
-CONTAINER_ID_RUNNING := $(shell docker ps -q -f name=santa-app)
-ifneq ($(CONTAINER_ID_RUNNING), )
-CONTAINER_RUNNING := "true"
-endif
-CONTAINER_EXITSTS := "false"
-CONTAINER_ID_STOPPED := $(shell docker ps -qa -f name=santa-app)
-ifneq ($(CONTAINER_ID_STOPPED), )
-CONTAINER_EXITSTS := "true"
-endif
-
 # run app in local container
 docker-start:
-ifeq ($(IMAGE_EXITSTS), "false")
-	@echo "$(ECHO_PREFIX) Creating Docker image..."
-	docker build -t santa-app .
-endif
 	@echo "$(ECHO_PREFIX) Starting Docker container..."
-	docker run -it -p 3080:3080 --name santa-app santa-app
+	docker-compose up
 
 # stops the app's container
 docker-stop:
-ifeq ($(CONTAINER_RUNNING), "true")
 	@echo "$(ECHO_PREFIX) Stopping Docker container..."
-	docker container stop santa-app
-endif
-ifeq ($(CONTAINER_EXITSTS), "true")
+	docker-compose stop
 	@echo "$(ECHO_PREFIX) Removing Docker container..."
-	docker container rm santa-app
-endif
+	docker-compose rm -f
 
 # removes the docker image
 docker-clean: docker-stop
 	@echo "$(ECHO_PREFIX) Removing Docker image..."
-ifeq ($(IMAGE_EXITSTS), "true")
-	docker rmi -f santa-app
-endif
+	docker-compose down --rmi all
