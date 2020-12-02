@@ -84,9 +84,9 @@ app.post('/event', async (req, res) => {
 
         // give everyone personal keys
         people.forEach(person => {
-            let potentialKey = cryptoRandomString({ length: 15, type: 'url-safe' });
+            let potentialKey = cryptoRandomString({ length: 15, type: db.keyType() });
             while (keysSet.has(potentialKey)) {
-              potentialKey = cryptoRandomString({ length: 15, type: 'url-safe' });
+              potentialKey = cryptoRandomString({ length: 15, type: db.keyType() });
             }
             keysSet.add(potentialKey);
             peopleArray.push({ name: person.name, email: person.email, personalKey: potentialKey });

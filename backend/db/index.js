@@ -1,11 +1,15 @@
 const cryptoRandomString = require('crypto-random-string');
 const Pool = require('pg').Pool;
 
+console.log("Database URL:", process.env.DATABASE_URL);
+const enableSSL = !process.env.LOCAL_SANTA;
+console.log("SSL for DB Connection:", enableSSL);
+const keyType = 'alphanumeric';
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: {
+    ssl: enableSSL ? {
         rejectUnauthorized: false 
-    }
+    } : false
 });
 
 /**
@@ -16,22 +20,24 @@ async function verifiedKey() {
     // potential key
     let key = cryptoRandomString({
         length: 10,
-        type: 'url-safe'
+        type: keyType
     });
 
     // attempt up to ten times to generate a unique key (although changes of dupe are minimal)
     for (let i = 0; i < 10; i++) {
         try {
+            console.log("Checking key for uniqueness:", key);
             let result = await pool.query(`SELECT * FROM events WHERE key = '${key}'`);
             if (result.rowCount == 0) {
                 return key;
             }
             key = cryptoRandomString({
                 length: 10,
-                type: 'url-safe'
+                type: keyType
             });
         } catch (err) {
-            continue;
+            console.log("Error while checking for event ID uniqueness", err);
+            break;
         }
     }
     return null;
@@ -77,5 +83,6 @@ const shuffle = (array) => {
 module.exports = {
     query: (text, params) => pool.query(text, params),
     verifiedKey: () => verifiedKey(),
-    shuffle: (array) => shuffle(array)
+    shuffle: (array) => shuffle(array),
+    keyType: () => keyType
 };
