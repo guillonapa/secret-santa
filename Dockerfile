@@ -1,9 +1,9 @@
-FROM node:12 AS ui-build
+FROM node:15 AS ui-build
 WORKDIR /usr/src/app
 COPY client/ ./client/
 RUN cd client && npm install && npm run build
 
-FROM node:12 AS server-build
+FROM node:15 AS server-build
 WORKDIR /root/
 COPY --from=ui-build /usr/src/app/client/build ./client/build
 COPY backend/ ./backend/
