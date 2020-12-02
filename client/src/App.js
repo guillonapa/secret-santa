@@ -175,7 +175,7 @@ class App extends React.Component {
                                 </Box>
                                 <Text>Enter a name for your event and add all your guests to the list. After the event is created, everyone will receive an email with the event key and their unique personal key. These keys can be used to reveal to whom will they be giving a gift this year.</Text>
                                 <Box flex="grow" overflow="auto" direction="row" fill="horizontal" align="center" gap="small" >
-                                    <TextInput placeholder="Event Name..." onChange={(event) => { this.updateEventName(event.target.value) }} />
+                                    <TextInput placeholder="Event name" onChange={(event) => { this.updateEventName(event.target.value) }} />
                                 </Box>
                             </Box>
 
@@ -187,12 +187,12 @@ class App extends React.Component {
                                             (<Box direction="row" gap="small" alignContent="center" align="center">
                                                 <Box alignSelf="center" alignContent="center" flex="grow">
                                                     <FormField>
-                                                        <TextInput value={datum.name} placeholder="Name..." onChange={(event) => this.updateTable(event.target.value, datum.email, datum.index)}></TextInput>
+                                                        <TextInput value={datum.name} placeholder="Name" onChange={(event) => this.updateTable(event.target.value, datum.email, datum.index)}></TextInput>
                                                     </FormField>
                                                 </Box>
                                                 <Box alignSelf="center" alignContent="center" flex="grow">
                                                     <FormField>
-                                                        <TextInput value={datum.email} placeholder="Email..." onChange={(event) => this.updateTable(datum.name, event.target.value, datum.index)}></TextInput>
+                                                        <TextInput value={datum.email} placeholder="Email" onChange={(event) => this.updateTable(datum.name, event.target.value, datum.index)}></TextInput>
                                                     </FormField>
                                                 </Box>
                                                 <Box alignSelf="center" flex="shrink"><Button plain icon={<Trash color="status-warning" onClick={() => this.deleteUser(datum.index)}/>}/></Box>
