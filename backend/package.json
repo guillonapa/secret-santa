@@ -22,7 +22,7 @@
   "homepage": "https://github.com/guillonapa/secret-santa#readme",
   "dependencies": {
     "cors": "^2.8.5",
-    "crypto-random-string": "^3.2.0",
+    "crypto-random-string": "^3.3.0",
     "express": "^4.17.1",
     "express-promise-router": "^3.0.3",
     "googleapis": "^65.0.0",
