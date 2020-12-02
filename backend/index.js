@@ -49,7 +49,7 @@ app.get('/secret/:eventKey/:personalKey', async (req, res) => {
  * Converts the array of people into comma separated 'objects' represented by
  * comma separated values within parentheses.
  */
-const stringifyPeopleResult = (people,key) => {
+const stringifyPeopleResult = (people, key) => {
     let i = 0;
     let result = '';
     people.forEach(person => {
@@ -111,7 +111,7 @@ app.post('/event', async (req, res) => {
         });
 
         // insert all people with their respective match into db
-        await db.query(`INSERT INTO people (name, email, event_key, personal_key, match) VALUES ${stringifyPeopleResult(matchedPeopleArray,key)}`);
+        await db.query(`INSERT INTO people (name, email, event_key, personal_key, match) VALUES ${stringifyPeopleResult(matchedPeopleArray, key)}`);
         // send emails to each person with event and personal keys
         emailSender.email(name, key, matchedPeopleArray);
 
