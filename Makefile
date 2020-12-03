@@ -14,6 +14,9 @@ heroku-deploy:
 heroku-logs:
 	heroku logs --tail --app $(HEROKU_APP_NAME)
 
+heroku-db-create:
+	heroku pg:psql --app $(HEROKU_APP_NAME) < backend/db/schema.sql
+
 # installs dependencies
 init:
 	@echo "$(ECHO_PREFIX) Installing backend dependencies..."
