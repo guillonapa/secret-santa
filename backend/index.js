@@ -129,7 +129,7 @@ app.get('*', (req, res) => {
 });
 
 // get a port for the app to listen at
-const port = process.env.PORT || process.env.REACT_APP_API_PORT || 3080;
+const port = process.env.PORT || 3080;
 
 // start listening for rest calls
 app.listen(port, () => {
