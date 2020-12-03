@@ -1,15 +1,24 @@
 const cryptoRandomString = require('crypto-random-string');
 const Pool = require('pg').Pool;
 
-console.log("Database URL:", process.env.DATABASE_URL);
-const enableSSL = !process.env.LOCAL_SANTA;
-console.log("SSL for DB Connection:", enableSSL);
+// environment
+const ENV = process.env;
+
+// type of keys to generate
 const keyType = 'alphanumeric';
+
+// get the database url to connect to
+const connectionString = !ENV.DATABASE_URL ? `postgresql://${ENV.USER}@localhost:5432/${ENV.DB_NAME}` : ENV.DATABASE_URL;
+console.log("Database URL:", connectionString);
+
+// get ssl configuration
+const ssl = !ENV.LOCAL_SANTA ? { rejectUnauthorized: false } : false;
+console.log("SSL for DB Connection:", ssl);
+
+// configure db pool
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: enableSSL ? {
-        rejectUnauthorized: false 
-    } : false
+    connectionString,
+    ssl
 });
 
 /**
