@@ -28,7 +28,7 @@ app.get('/secret/:eventKey/:personalKey', async (req, res) => {
 
     try {
         // get the person who's key is the same as the one for the person's matched key
-        const result = await db.query(`SELECT name FROM people WHERE personal_key IN (SELECT match FROM people WHERE personal_key = '${personalKey}' AND event_key = '${eventKey}')`);
+        const result = await db.query(`SELECT name, email FROM people WHERE personal_key IN (SELECT match FROM people WHERE personal_key = '${personalKey}' AND event_key = '${eventKey}')`);
 
         // make sure the a single row is returned
         const { rows } = result;
@@ -38,7 +38,7 @@ app.get('/secret/:eventKey/:personalKey', async (req, res) => {
         }
 
         // return the name of the secret person
-        const name = rows[0].name;
+        const name = `${rows[0].name} (${rows[0].email})`;
         res.send(name ? name : errMsg);
     } catch (err) {
         res.send("An internal error has occurred. Please contact the administrator for further help.");
@@ -113,10 +113,10 @@ app.post('/event', async (req, res) => {
         // insert all people with their respective match into db
         await db.query(`INSERT INTO people (name, email, event_key, personal_key, match) VALUES ${stringifyPeopleResult(matchedPeopleArray, key)}`);
         // send emails to each person with event and personal keys
-        emailSender.email(name, key, matchedPeopleArray);
+        let emailsResult = await emailSender.email(name, key, matchedPeopleArray);
 
         // return the key of the event
-        res.send(`${key}`);
+        res.send({emailsResult, key});
     } catch (err) {
         console.log(err)
         res.send("");

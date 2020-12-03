@@ -32,20 +32,21 @@ const transporter = nodemailer.createTransport({
 /**
  * Sends an email with the event and personal keys to a person.
  */
-const sendEmail = (eventName, eventKey, element) => {
+async function sendEmail(eventName, eventKey, element) {
     var mailOptions = {
         from: ENV.MAILER_EMAIL,
         to: element.email,
         subject: `You've been added to ${eventName}`,
         text: getBody(eventKey, element.name, element.personalKey)
     };
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Email sent: ' + info.response);
-        }
-    });
+    try {
+        let emailResult = await transporter.sendMail(mailOptions);
+        console.log(emailResult);
+        return '200';
+    } catch (err) {
+        console.log(err);
+        return '400';
+    }
 }
 
 /**
@@ -63,10 +64,21 @@ Ho-ho-ho,
 Santa`
 }
 
-module.exports = {
-    email: (eventName, eventKey, list) => { 
-        list.forEach(element => {
-            sendEmail(eventName, eventKey, element);
-        });
+/**
+ * Sends an email to each of the participants, synchronously.
+ */
+async function email(eventName, eventKey, list) { 
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    for (var i = 0; i < list.length; i++) {
+        let returnCode = await sendEmail(eventName, eventKey, list[i]);
+        console.log('Email return code: ', returnCode);
+        if (returnCode !== '200') {
+            return returnCode;
+        }
     }
+    return '200';
+}
+
+module.exports = {
+    email
 }

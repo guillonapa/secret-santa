@@ -87,20 +87,31 @@ class App extends React.Component {
         });
     }
 
-    getUsers() {
+    createEvent() {
         let name = this.state.eventName;
         let people = this.state.data.slice();
+        this.setState({
+            openNotification: true,
+            notificationMsg: `Creating your event...`,
+            notificationBackground: "status-unknown"
+        });
         if (name.trim() && people.length > 2) {
             this.setShowLayer(false);
             axiosInstance.post(`/event`, {
                 name: name.substring(0, 30),
                 people
             }).then(res => {
-                if (res && res.data) {
+                if (res && res.data && res.data['emailsResult'] && res.data['key']) {
+                    let message = `A new Secret Santa event has been successfully created with ID '${res.data['key']}'`;
+                    let background = 'status-ok';
+                    if (res.data['emailsResult'] === '400') {
+                        message = `An error occurred while attempting to create the event. Some of the emails were not sent. Please try again later.`;
+                        background = 'status-warning';
+                    }
                     this.setState({
                         openNotification: true,
-                        notificationMsg: `A new Secret Santa event has been successfully created with key '${res.data}'`,
-                        notificationBackground: "status-ok"
+                        notificationMsg: message,
+                        notificationBackground: background
                     });
                 } else {
                     this.setState({
@@ -208,7 +219,7 @@ class App extends React.Component {
 
                             {/* Box with submit and cancel buttons */}
                             <Box flex="grow" overflow="auto" fill="horizontal" direction="row-reverse" align="center" pad="small" gap="small" alignSelf="center" width="large" >
-                                <Button type="submit" primary label="Create" onClick={() => { this.getUsers() }} disabled={createDisabled} />
+                                <Button type="submit" primary label="Create" onClick={() => { this.createEvent() }} disabled={createDisabled} />
                                 <Button type="button" label="Cancel" onClick={() => { this.setShowLayer(false) }} />
                             </Box>
                         </Box>
